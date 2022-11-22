@@ -11,19 +11,20 @@ public class RoundRobin {
         tat = new int[10];
         rem_bt = new int[10];
 
-        Scanner s = new Scanner(System.in);
-        System.out.print("Enter the number of process (maximum 10) = ");
-        n = s.nextInt();
+        try (Scanner s = new Scanner(System.in)) {
+            System.out.print("Enter the number of process (maximum 10) = ");
+            n = s.nextInt();
 
-        System.out.print("Enter the burst time of the process\n");
-        for (i = 0; i < n; i++) {
-            System.out.print("P" + i + " = ");
-            bt[i] = s.nextInt();
-            rem_bt[i] = bt[i];
+            System.out.print("Enter the burst time of the process\n");
+            for (i = 0; i < n; i++) {
+                System.out.print("P" + i + " = ");
+                bt[i] = s.nextInt();
+                rem_bt[i] = bt[i];
+            }
+
+            System.out.print("Enter the quantum time: ");
+            qt = s.nextInt();
         }
-
-        System.out.print("Enter the quantum time: ");
-        qt = s.nextInt();
         while (true) {
             for (i = 0, count = 0; i < n; i++) {
                 temp = qt;

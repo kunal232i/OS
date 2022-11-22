@@ -6,62 +6,64 @@ import java.io.IOException;
 public class phase1 {
 
     static char M[][];
-    static char R[] = new char[4];
-    static char IR[] = new char[4];
+    static char R[];
+    static char IR[];
     static int IC, C;
     static int SI;
-    static char buffer[] = new char[41];
+    static char buffer[] = new char[10000];
     static BufferedReader br;
     static String s;
 
-    static void init(){
+    static void init() {
         M = new char[100][4];
+        IR = new char[4];
+        R = new char[4];
     }
 
     static void printMemory() {
-            int k = 0;
-            for (int i = 0; i < 100; i++) {
-                if(i%10==0){
-                    System.out.println("Block["+k+"]");
-                    k++;
-                }
-                for (int j = 0; j < 4; j++) {
-                    System.out.print(M[i][j]);
-                }
-                System.out.println();
+        int k = 0;
+        for (int i = 0; i < 100; i++) {
+            if (i % 10 == 0) {
+                System.out.println("Block[" + k + "]");
+                k++;
             }
+            for (int j = 0; j < 4; j++) {
+                System.out.print(M[i][j]);
+            }
+            System.out.println();
+        }
     }
 
-    static void startExecution() throws IOException{
-            IC=0;
-            executeUserProgram();
+    static void startExecution() throws IOException {
+        IC = 0;
+        executeUserProgram();
     }
 
-    static void executeUserProgram() throws IOException{
+    static void executeUserProgram() throws IOException {
         int tmp = 0;
         String str = "";
-        while(IR[0] != 'H'){
-            for(int i=0; i<4; i++){
+        do {
+            for (int i = 0; i < 4; i++) {
                 IR[i] = M[IC][i];
             }
             String str1 = Character.toString(IR[0]);
-            str1 += Character.toString(IR[1]);
-            if(IR[0]!='H') {
+            if (IR[0] != 'H') {
+                str1 += Character.toString(IR[1]);
                 str = String.valueOf(IR[2]);
                 str += String.valueOf(IR[3]);
                 tmp = Integer.parseInt(str);
             }
             IC++;
 
-            switch (str1){
+            switch (str1) {
                 case "GD":
-                    SI=1;
+                    SI = 1;
                     break;
                 case "PD":
-                    SI=2;
+                    SI = 2;
                     break;
                 case "H":
-                    SI=3;
+                    SI = 3;
                     break;
                 case "LR":
                     for (int i = 0; i < 4; i++) {
@@ -90,7 +92,6 @@ public class phase1 {
                     break;
             }
 
-
             if (SI == 1) {
                 read();
                 SI = 0;
@@ -102,13 +103,12 @@ public class phase1 {
             if (SI == 3) {
                 terminate();
             }
-        }
+        } while (IR[0] != 'H');
 
     }
 
-
     static void read() throws IOException {
-        s=br.readLine();
+        s = br.readLine();
         String str = String.valueOf(IR[2]);
         str += String.valueOf(IR[3]);
 
@@ -116,14 +116,14 @@ public class phase1 {
         int checkBlock = tmp;
 
         int c = 0;
-        for(int i=0; i<s.length(); i++){
-            M[tmp][c]=s.charAt(i);
+        for (int i = 0; i < s.length(); i++) {
+            M[tmp][c] = s.charAt(i);
             c++;
-            if(c==4){
+            if (c == 4) {
                 c = 0;
                 tmp++;
             }
-            if(tmp == (checkBlock + 10)){
+            if (tmp == (checkBlock + 10)) {
                 break;
             }
         }
@@ -137,19 +137,19 @@ public class phase1 {
         int checkBlock = tmp;
         String s = "";
         int c = 0;
-        while(M[tmp][c]!=0){
+        while (M[tmp][c] != 0) {
             s += M[tmp][c++];
-            if(c==4){
-                c=0;
+            if (c == 4) {
+                c = 0;
                 tmp++;
             }
-            if(tmp == (checkBlock + 10)){
+            if (tmp == (checkBlock + 10)) {
                 break;
             }
         }
 
         try {
-            FileWriter output = new FileWriter("\\workspaces\\OS\\Phase1\\output.txt", true);
+            FileWriter output = new FileWriter("output.txt", true);
             output.write(s);
             output.write("\n");
             output.close();
@@ -158,18 +158,19 @@ public class phase1 {
         }
     }
 
-    static void terminate()throws IOException{
+    static void terminate() throws IOException {
         try {
-            FileWriter output = new FileWriter("\\workspaces\\OS\\Phase1\\output.txt", true);
+            FileWriter output = new FileWriter("output.txt", true);
             output.write("\n\n");
             output.close();
         } catch (Exception e) {
             System.out.println(e);
         }
     }
+
     static void load() throws IOException {
-        while(s!=null){
-            if(buffer[0] == '$' && buffer[1] == 'A' && buffer[2] == 'M' && buffer[3] == 'J') {
+        while (s != null) {
+            if (buffer[0] == '$' && buffer[1] == 'A' && buffer[2] == 'M' && buffer[3] == 'J') {
                 init();
                 int k = 0;
                 s = br.readLine();
@@ -193,27 +194,28 @@ public class phase1 {
                         }
                         k++;
                     }
+                    count = 0;
                     s = br.readLine();
                     buffer = s.toCharArray();
                 }
 
             }
 
-                if (buffer[0] == '$' && buffer[1] == 'D' && buffer[2] == 'T' && buffer[3] == 'A') {
-                    startExecution();
-                }
-                if (buffer[0] == '$' && buffer[1] == 'E' && buffer[2] == 'N' && buffer[3] == 'D') {
-                    printMemory();
-                    break;
-                }
-                    s = br.readLine();
-                    buffer = s.toCharArray();
+            if (buffer[0] == '$' && buffer[1] == 'D' && buffer[2] == 'T' && buffer[3] == 'A') {
+                startExecution();
+            }
+            if (buffer[0] == '$' && buffer[1] == 'E' && buffer[2] == 'N' && buffer[3] == 'D') {
+                printMemory();
+            }
+            s = br.readLine();
+            if (s != null) {
+                buffer = s.toCharArray();
+            }
         }
     }
 
-
-    public static void main(String[] args)throws Exception{
-        FileReader file = new FileReader("\\workspaces\\OS\\Phase1\\input.txt");
+    public static void main(String[] args) throws Exception {
+        FileReader file = new FileReader("input.txt");
         br = new BufferedReader(file);
         s = br.readLine();
         buffer = s.toCharArray();
