@@ -1,0 +1,8 @@
+TYC
+No Error
+
+
+TYC
+TYD
+Invalid Page Fault
+TI = 0 PI = 3
