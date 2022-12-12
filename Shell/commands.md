@@ -32,3 +32,7 @@ ln -s myfile mysoftlink
 # Create a hard link to myfile named "myhardlink"
 
 ln -h myfile myhardlink
+
+# To display how many times lines are repeated in a give
+
+uniq -c < myfile
