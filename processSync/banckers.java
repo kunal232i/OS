@@ -1,140 +1,106 @@
+//Java Program for Bankers Algorithm
 package processSync;
 
-import java.util.Scanner;
+import java.util.*;
 
-// create BankersAlgoExample class to implement Banker's algorithm in Java  
-class bankers {
+public class banckers {
+    int n = 5; // Number of processes
+    int m = 3; // Number of resources
+    int need[][] = new int[n][m];
+    int[][] max;
+    int[][] alloc;
+    int[] avail;
+    int safeSequence[] = new int[n];
 
-    // create findNeedValue() method to calculate the need of each process
-    static void findNeedValue(int needArray[][], int maxArray[][], int allocationArray[][], int totalProcess,
-            int totalResources) {
-        // use nested for loop to calculate Need for each process
-        for (int i = 0; i < totalProcess; i++) { // for each process
-            for (int j = 0; j < totalResources; j++) { // for each resource
-                needArray[i][j] = maxArray[i][j] - allocationArray[i][j];
-            }
-        }
+    void initializeValues() {
+        // P0, P1, P2, P3, P4 are the Process names here
+        // Allocation Matrix
+        alloc = new int[][] { { 0, 1, 0 }, // P0
+                { 2, 0, 0 }, // P1
+                { 3, 0, 2 }, // P2
+                { 2, 1, 1 }, // P3
+                { 0, 0, 2 } }; // P4
+
+        // MAX Matrix
+        max = new int[][] { { 7, 5, 3 }, // P0
+                { 3, 2, 2 }, // P1
+                { 9, 0, 2 }, // P2
+                { 2, 2, 2 }, // P3
+                { 4, 3, 3 } }; // P4
+
+        // Available Resources
+        avail = new int[] { 3, 3, 2 };
     }
 
-    // create checkSafeSystem() method to determine whether the system is in safe
-    // state or not
-    static boolean checkSafeSystem(int processes[], int availableArray[], int maxArray[][], int allocationArray[][],
-            int totalProcess, int totalResources) {
-        int[][] needArray = new int[totalProcess][totalResources];
+    void isSafe() {
+        int count = 0;
 
-        // call findNeedValue() method to calculate needArray
-        findNeedValue(needArray, maxArray, allocationArray, totalProcess, totalResources);
+        // visited array to find the already allocated process
+        boolean visited[] = new boolean[n];
+        for (int i = 0; i < n; i++) {
+            visited[i] = false;
+        }
 
-        // all the process should be infinished in starting
-        boolean[] finishProcesses = new boolean[totalProcess];
+        // work array to store the copy of available resources
+        int work[] = new int[m];
+        for (int i = 0; i < m; i++) {
+            work[i] = avail[i];
+        }
 
-        // initialize safeSequenceArray that store safe sequenced
-        int[] safeSequenceArray = new int[totalProcess];
-
-        // initialize workArray as a copy of the available resources
-        int[] workArray = new int[totalResources];
-
-        for (int i = 0; i < totalResources; i++) // use for loop to copy each available resource in the workArray
-            workArray[i] = availableArray[i];
-
-        // initialize counter variable whose value will be 0 when the system is not in
-        // the safe state or when all the processes are not finished.
-        int counter = 0;
-
-        // use loop to iterate the statements until all the processes are not finished
-        while (counter < totalProcess) {
-            // find infinished process which needs can be satisfied with the current work
-            // resource.
-            boolean foundSafeSystem = false;
-            for (int m = 0; m < totalProcess; m++) {
-                if (finishProcesses[m] == false) // when process is not finished
-                {
+        while (count < n) {
+            boolean flag = false;
+            for (int i = 0; i < n; i++) {
+                if (visited[i] == false) {
                     int j;
-
-                    // use for loop to check whether the need of each process for all the resources
-                    // is less than the work
-                    for (j = 0; j < totalResources; j++)
-                        if (needArray[m][j] > workArray[j]) // check need of current resource for current process with
-                                                            // work
+                    for (j = 0; j < m; j++) {
+                        if (need[i][j] > work[j])
                             break;
+                    }
+                    if (j == m) {
+                        safeSequence[count++] = i;
+                        visited[i] = true;
+                        flag = true;
 
-                    // the value of J and totalResources will be equal when all the needs of current
-                    // process are satisfied
-                    if (j == totalResources) {
-                        for (int k = 0; k < totalResources; k++)
-                            workArray[k] += allocationArray[m][k];
-
-                        // add current process in the safeSequenceArray
-                        safeSequenceArray[counter++] = m;
-
-                        // make this process finished
-                        finishProcesses[m] = true;
-
-                        foundSafeSystem = true;
+                        for (j = 0; j < m; j++) {
+                            work[j] = work[j] + alloc[i][j];
+                        }
                     }
                 }
             }
-
-            // the system will not be in the safe state when the value of the
-            // foundSafeSystem is false
-            if (foundSafeSystem == false) {
-                System.out.print("The system is not in the safe state because lack of resources");
-                return false;
+            if (flag == false) {
+                break;
             }
         }
-
-        // print the safe sequence
-        System.out.print("The system is in safe sequence and the sequence is as follows: ");
-        for (int i = 0; i < totalProcess; i++)
-            System.out.print("P" + safeSequenceArray[i] + " ");
-
-        return true;
+        if (count < n) {
+            System.out.println("The System is UnSafe!");
+        } else {
+            // System.out.println("The given System is Safe");
+            System.out.println("Following is the SAFE Sequence");
+            for (int i = 0; i < n; i++) {
+                System.out.print("P" + safeSequence[i]);
+                if (i != n - 1)
+                    System.out.print(" -> ");
+            }
+        }
     }
 
-    // main() method start
+    void calculateNeed() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                need[i][j] = max[i][j] - alloc[i][j];
+            }
+        }
+    }
+
     public static void main(String[] args) {
-        int numberOfProcesses, numberOfResources;
+        int i, j, k;
+        banckers gfg = new banckers();
 
-        // create scanner class object to get input from user
-        Scanner sc = new Scanner(System.in);
+        gfg.initializeValues();
+        // Calculate the Need Matrix
+        gfg.calculateNeed();
 
-        // get total number of resources from the user
-        System.out.println("Enter total number of processes");
-        numberOfProcesses = sc.nextInt();
-
-        // get total number of resources from the user
-        System.out.println("Enter total number of resources");
-        numberOfResources = sc.nextInt();
-
-        int processes[] = new int[numberOfProcesses];
-        for (int i = 0; i < numberOfProcesses; i++) {
-            processes[i] = i;
-        }
-
-        int availableArray[] = new int[numberOfResources];
-        for (int i = 0; i < numberOfResources; i++) {
-            System.out.println("Enter the availability of resource" + i + ": ");
-            availableArray[i] = sc.nextInt();
-        }
-
-        int maxArray[][] = new int[numberOfProcesses][numberOfResources];
-        for (int i = 0; i < numberOfProcesses; i++) {
-            for (int j = 0; j < numberOfResources; j++) {
-                System.out.println("Enter the maximum resource" + j + " that can be allocated to process" + i + ": ");
-                maxArray[i][j] = sc.nextInt();
-            }
-        }
-
-        int allocationArray[][] = new int[numberOfProcesses][numberOfResources];
-        for (int i = 0; i < numberOfProcesses; i++) {
-            for (int j = 0; j < numberOfResources; j++) {
-                System.out.println("How many instances of resource" + j + " are allocated to process" + i + "? ");
-                allocationArray[i][j] = sc.nextInt();
-            }
-        }
-
-        // call checkSafeSystem() method to check whether the system is in safe state or
-        // not
-        checkSafeSystem(processes, availableArray, maxArray, allocationArray, numberOfProcesses, numberOfResources);
+        // Check whether system is in safe state or not
+        gfg.isSafe();
     }
 }
