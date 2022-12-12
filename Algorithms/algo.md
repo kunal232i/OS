@@ -97,11 +97,9 @@ wt = tat-bt
 avgtat = tat/process
 avgwt = wt/process
 
-# round robin
+# Round Robin
 
-image
-
-Round robin
+![image](https://user-images.githubusercontent.com/81668653/206990189-b355acbc-f1db-4573-9298-1ac0d6fc5bdc.png)
 
 CT logic
 int temp;
