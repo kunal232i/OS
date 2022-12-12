@@ -1,8 +1,5 @@
 package processSync;
 
-// import required classes and packages  
-import java.util.*;
-import java.io.*;
 import java.util.Scanner;
 
 // create BankersAlgoExample class to implement Banker's algorithm in Java  
