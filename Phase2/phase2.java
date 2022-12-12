@@ -17,7 +17,7 @@ public class phase2 {
     static BufferedReader br;
     static String S;
 
-    class PCB {
+    static class PCB {
         static int JID, SI, TI, PI = 0, TTC, LLC, TTL, TLL, PTR;
     }
 
